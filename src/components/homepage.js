@@ -5,44 +5,18 @@ import { ProgressBar, Input, Button } from 'react-materialize';
 import ErrorBox from './error';
 import Search from './search';
 import List from './list';
+import fetchApiData from './fetch-api-data';
 import { search } from './../utils/http';
 
-export default class Homepage extends Component {
+class Homepage extends Component {
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      data: null,
-    }
-  }
-
-  componentDidMount() {
-    this.search();
-  }
-
-  search = (query) => {
-
-    this.setState({
-      data: null,
-    });
-
-    search(query)
-    .then(data => {
-      this.setState({
-        data,
-      });
-    })
-    .catch(e => {
-      this.setState({
-        data: e,
-      });
-    });
+  handleSearch = (data) => {
+    this.props.reloadData(data);
   }
 
   render() {
 
-    const { data } = this.state;
+    const { data } = this.props;
 
     const showError = data && data instanceof Error;
     const showList = data && !showError;
@@ -50,7 +24,7 @@ export default class Homepage extends Component {
     return (
       <div>
 
-        <Search search={this.search} />
+        <Search search={this.handleSearch} />
 
         {!data && <ProgressBar />}
 
@@ -68,3 +42,5 @@ export default class Homepage extends Component {
     );
   }
 }
+
+export default fetchApiData(Homepage, search);
